@@ -24,6 +24,14 @@ const server = http.createServer((req, res)  => {
     res.end(data);
     });
   }
+  if(method === 'POST'){
+    console.log('POST');
+    let body ='';
+    req.on('data', ( data ) =>{
+      body += data;
+      console.log(`BODY ${body}`);
+    });
+  }
 });
 
 
