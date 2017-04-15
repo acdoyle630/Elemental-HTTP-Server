@@ -29,8 +29,16 @@ const server = http.createServer((req, res)  => {
     let body ='';
     req.on('data', ( data ) =>{
       body += data;
-      console.log(`BODY ${body}`);
+      postContent(body);
     });
+  }
+
+  function postContent(body){
+    console.log(body);
+    if (fs.existsSync('gold.html') === false){
+      console.log('nofile');
+    }
+
   }
 });
 
