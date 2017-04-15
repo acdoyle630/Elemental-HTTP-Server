@@ -35,8 +35,9 @@ const server = http.createServer((req, res)  => {
 
   function postContent(body){
     console.log(body);
-    if (fs.existsSync('gold.html') === false){
-      console.log('nofile');
+    console.log(body.split('='));
+    if (fs.existsSync(`${body.split('=')}.html`) === false){
+      console.log('no file');
     }
 
   }
