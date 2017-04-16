@@ -93,9 +93,9 @@ const server = http.createServer((req, res)  => {
       let dataArray = data.toString().split('\n');
       console.log(dataArray);
       console.log(dataArray.length);
-      dataArray.splice(21,0,`<li>
-        <a href = /${element}.html>${element}</a>
-        </li></ol>`);
+      dataArray.splice(18,0,`   <li>
+      <a href = /${element}.html>${element}</a>
+    </li>`);
       console.log(dataArray);
       //appenddddIndex(dataArray);
 
@@ -113,7 +113,7 @@ const server = http.createServer((req, res)  => {
 //POST
   function createIndex(dataArray){
     //console.log('createIndex: ' + element);
-    fs.writeFile(`./public/index.html`, dataArray.join(''), (err) => {
+    fs.writeFile(`./public/index.html`, dataArray.join('\n'), (err) => {
       if(err) throw err;
       console.log('file saved');
       res.end('saved');
@@ -130,7 +130,25 @@ const server = http.createServer((req, res)  => {
     fs.unlink(`./public/${elementToBeDeleted}.html`, (err) =>{
       if (err) throw err;
     });
+    deleteElementIndex(elementToBeDeleted);
   }
+
+  function deleteElementIndex(element){
+    fs.readFile('./public/index.html', (err, data) => {
+      let deleteElement = data.toString().split('\n');
+      console.log(deleteElement);
+      for(var i = 0; i<deleteElement.length; i++){
+        if(deleteElement[i].indexOf(element) >=0 ){
+          console.log('found');
+          console.log(deleteElement.splice(i-1, 3));
+          deleteIndex(deleteElement);
+        }
+      }
+    });
+  }
+
+
+
 });
 
       // fs.readFile('./public/index.html', (err, data) =>{
