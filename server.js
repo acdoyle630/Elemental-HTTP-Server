@@ -3,9 +3,6 @@
 const http = require('http');
 const fs = require('fs');
 
-
-
-
 const server = http.createServer((req, res)  => {
   let numberOfElements = 2;
   let method = req.method;
@@ -14,9 +11,6 @@ const server = http.createServer((req, res)  => {
   if(url ==='/' || url ===''){
     url = 'index.html';
   }
-  console.log(url);
-
-
   if(method === 'GET'){
   var fileName = fs.readFile(`./public/${url}`,(err, data) => {
     //if (err) throw err;
@@ -25,11 +19,16 @@ const server = http.createServer((req, res)  => {
     });
   }
   if(method === 'POST'){
-    console.log('POST');
     let body ='';
     req.on('data', ( data ) =>{
       body += data;
       checkFile(body);
+    });
+  }
+  if(method === 'DELETE'){
+    req.on('data', (data) =>{
+      console.log(data.toString());
+      deleteElement(data);
     });
   }
 
@@ -61,7 +60,6 @@ const server = http.createServer((req, res)  => {
     });
   }
 
-
   function fileContent(element, weight, description){
     return  `<!DOCTYPE html>
 <html lang="en">
@@ -80,25 +78,20 @@ const server = http.createServer((req, res)  => {
 </html>`;
   }
 
-
-
   function appendFile(element){
     var elementFileName = fs.readFile(`./public/${element}.html`,(err, data) => {
-
-    //if (err) throw err;
     console.log('append' + element);
     res.writeHead(200);
     appendIndex(element);
     });
   }
 
-
   function appendIndex(element){
     var indexFileName = fs.readFile('./public/index.html', (err, data) =>{
+      console.log(indexFileName);
       deleteIndex(element);
     });
   }
-
 
   function deleteIndex(element){
     console.log(`delete ${element}`);
@@ -107,8 +100,6 @@ const server = http.createServer((req, res)  => {
       createIndex(element);
     });
   }
-
-
 
   function createIndex(element){
     console.log('createIndex: ' + element);
@@ -119,9 +110,10 @@ const server = http.createServer((req, res)  => {
     });
   }
 
-
   function indexFileContent(element){
+    //let getIndex = querySelector('#elementList');
     console.log(element);
+   // console.log(getIndex);
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -139,13 +131,22 @@ const server = http.createServer((req, res)  => {
     </li>
     <li>
       <a href="/helium.html">Helium</a>
-    </li>
+    </li>`+`
     <li>
       <a href="/${element}.html">${element}</a>
     </li>
   </ol>
 </body>
 </html>`;
+  }
+
+
+  function deleteElement(data){
+    console.log(data);
+    let elementToBeDeleted = data.toString().split('=')[1];
+    fs.unlink(`./public/${elementToBeDeleted}.html`, (err) =>{
+      if (err) throw err;
+    });
   }
 });
 
@@ -181,5 +182,5 @@ server.listen(6969, () => {
     </li>
   </ol>
 </body>
-</html>`
+</html>`;
 
