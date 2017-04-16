@@ -125,12 +125,17 @@ const server = http.createServer((req, res)  => {
   function deleteElement(data){
     console.log(data);
     let elementToBeDeleted = data.toString().split('=')[1];
+    console.log(elementToBeDeleted);
+    elementToBeDeleted = elementToBeDeleted.split('&')[0];
     fs.unlink(`./public/${elementToBeDeleted}.html`, (err) =>{
       if (err) throw err;
     });
   }
 });
 
+      // fs.readFile('./public/index.html', (err, data) =>{
+      //   let data
+      // });
 
 server.listen(6969, () => {
 
