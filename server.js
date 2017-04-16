@@ -3,6 +3,7 @@
 const http = require('http');
 const fs = require('fs');
 
+// Create Server with 2 starting elements and identify req
 const server = http.createServer((req, res)  => {
   let numberOfElements = 2;
   let method = req.method;
@@ -31,7 +32,7 @@ const server = http.createServer((req, res)  => {
       deleteElement(data);
     });
   }
-
+// check to see if posted file exists
   function checkFile(body){
     console.log("BODY: " + body);
     let bodyArray = body.split('&');
@@ -51,7 +52,7 @@ const server = http.createServer((req, res)  => {
       res.write('exists');
     }
   }
-
+// POST save new file with name posted
   function writeFile(element, weight, description){
     fs.writeFile(`./public/${element}.html`, fileContent(element,weight,description), (err) => {
       if(err) throw err;
@@ -59,7 +60,7 @@ const server = http.createServer((req, res)  => {
       appendFile(element);
     });
   }
-
+// POST add contentd to new file with HTML template
   function fileContent(element, weight, description){
     return  `<!DOCTYPE html>
 <html lang="en">
@@ -77,7 +78,7 @@ const server = http.createServer((req, res)  => {
 </body>
 </html>`;
   }
-
+//POST
   function appendFile(element){
     var elementFileName = fs.readFile(`./public/${element}.html`,(err, data) => {
     console.log('append' + element);
@@ -85,31 +86,50 @@ const server = http.createServer((req, res)  => {
     appendIndex(element);
     });
   }
-
+//POST
   function appendIndex(element){
-    var indexFileName = fs.readFile('./public/index.html', (err, data) =>{
-      console.log(indexFileName);
-      deleteIndex(element);
+    fs.readFile('./public/index.html', (err, data) =>{
+      console.log('index: ' + data);
+      let dataArray = data.toString().split('\n');
+      console.log(dataArray);
+      console.log(dataArray.length);
+      dataArray.splice(21,0,`<li>
+        <a href = "/${element}.html">${element}</a>
+        </li>`);
+      //console.log(dataArray);
+      //appenddddIndex(dataArray);
+
+      deleteIndex(dataArray);
     });
   }
 
-  function deleteIndex(element){
-    console.log(`delete ${element}`);
+
+  // function appenddddIndex(dataArray){
+  //   console.log("testing DA" + dataArray.join('\n'));
+  //   fs.appendFile('./public/index.html', dataArray.join('\n'), (err) =>{
+  //     if (err) throw err;
+  //     console.log('maybe appended?????');
+  //   });
+  // }
+
+
+//POST
+  function deleteIndex(dataArray){
     fs.unlink('./public/index.html', (err) =>{
       if (err) throw err;
-      createIndex(element);
+      createIndex(dataArray);
     });
   }
-
-  function createIndex(element){
-    console.log('createIndex: ' + element);
-    fs.writeFile(`./public/index.html`, indexFileContent(element), (err) => {
+//POST
+  function createIndex(dataArray){
+    //console.log('createIndex: ' + element);
+    fs.writeFile(`./public/index.html`, dataArray, (err) => {
       if(err) throw err;
       console.log('file saved');
       res.end('saved');
     });
   }
-
+//POST
   function indexFileContent(element){
     //let getIndex = querySelector('#elementList');
     console.log(element);
@@ -140,7 +160,7 @@ const server = http.createServer((req, res)  => {
 </html>`;
   }
 
-
+//DELETE
   function deleteElement(data){
     console.log(data);
     let elementToBeDeleted = data.toString().split('=')[1];
@@ -183,4 +203,3 @@ server.listen(6969, () => {
   </ol>
 </body>
 </html>`;
-
