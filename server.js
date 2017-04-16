@@ -57,6 +57,7 @@ const server = http.createServer((req, res)  => {
     fs.writeFile(`./public/${element}.html`, fileContent(element,weight,description), (err) => {
       if(err) throw err;
       console.log('file saved');
+      console.log('NUMBER OF ELEMENTS: ' +numberOfElements);
       appendFile(element);
     });
   }
@@ -93,6 +94,7 @@ const server = http.createServer((req, res)  => {
       let dataArray = data.toString().split('\n');
       console.log(dataArray);
       console.log(dataArray.length);
+      dataArray.splice(10,1, `These are ${numberOfElements}`);
       dataArray.splice(18,0,`   <li>
       <a href = /${element}.html>${element}</a>
     </li>`);
