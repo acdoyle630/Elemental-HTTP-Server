@@ -94,24 +94,14 @@ const server = http.createServer((req, res)  => {
       console.log(dataArray);
       console.log(dataArray.length);
       dataArray.splice(21,0,`<li>
-        <a href = "/${element}.html">${element}</a>
-        </li>`);
-      //console.log(dataArray);
+        <a href = /${element}.html>${element}</a>
+        </li></ol>`);
+      console.log(dataArray);
       //appenddddIndex(dataArray);
 
       deleteIndex(dataArray);
     });
   }
-
-
-  // function appenddddIndex(dataArray){
-  //   console.log("testing DA" + dataArray.join('\n'));
-  //   fs.appendFile('./public/index.html', dataArray.join('\n'), (err) =>{
-  //     if (err) throw err;
-  //     console.log('maybe appended?????');
-  //   });
-  // }
-
 
 //POST
   function deleteIndex(dataArray){
@@ -123,42 +113,13 @@ const server = http.createServer((req, res)  => {
 //POST
   function createIndex(dataArray){
     //console.log('createIndex: ' + element);
-    fs.writeFile(`./public/index.html`, dataArray, (err) => {
+    fs.writeFile(`./public/index.html`, dataArray.join(''), (err) => {
       if(err) throw err;
       console.log('file saved');
       res.end('saved');
     });
   }
-//POST
-  function indexFileContent(element){
-    //let getIndex = querySelector('#elementList');
-    console.log(element);
-   // console.log(getIndex);
-    return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>The Elements</title>
-  <link rel="stylesheet" href="/css/styles.css">
-</head>
-<body>
-  <h1>The Elements</h1>
-  <h2>These are all the known elements.</h2>
-  <h3>These are ${numberOfElements}</h3>
-  <ol>
-    <li>
-      <a href="/hydrogen.html">Hydrogen</a>
-    </li>
-    <li>
-      <a href="/helium.html">Helium</a>
-    </li>`+`
-    <li>
-      <a href="/${element}.html">${element}</a>
-    </li>
-  </ol>
-</body>
-</html>`;
-  }
+
 
 //DELETE
   function deleteElement(data){
