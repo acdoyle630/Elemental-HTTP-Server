@@ -2,10 +2,10 @@
 
 const http = require('http');
 const fs = require('fs');
+let numberOfElements = 2;
 
 // Create Server with 2 starting elements and identify req
 const server = http.createServer((req, res)  => {
-  let numberOfElements = 2;
   let method = req.method;
   let url = req.url;
   let host = req.host;
@@ -142,7 +142,9 @@ const server = http.createServer((req, res)  => {
       for(var i = 0; i<deleteElement.length; i++){
         if(deleteElement[i].indexOf(element) >=0 ){
           console.log('found');
-          console.log(deleteElement.splice(i-1, 3));
+          numberOfElements --;
+          deleteElement.splice(i-1, 3);
+          deleteElement.splice(10,1, `These are ${numberOfElements}`);
           deleteIndex(deleteElement);
         }
       }
