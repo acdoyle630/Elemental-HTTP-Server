@@ -19,7 +19,7 @@ const server = http.createServer((req, res)  => {
     res.end(data);
     });
   }
-  if(method === 'POST'){
+  if(method === 'POST' || method === 'PUT'){
     let body ='';
     req.on('data', ( data ) =>{
       body += data;
@@ -31,6 +31,7 @@ const server = http.createServer((req, res)  => {
       console.log(data.toString());
       deleteElement(data);
     });
+
   }
 // check to see if posted file exists
   function checkFile(body){
@@ -49,7 +50,7 @@ const server = http.createServer((req, res)  => {
       writeFile(element,weight,description);
     } else {
       console.log('already exists');
-      res.write('exists');
+      putData(body);
     }
   }
 // POST save new file with name posted
@@ -118,7 +119,7 @@ const server = http.createServer((req, res)  => {
     fs.writeFile(`./public/index.html`, dataArray.join('\n'), (err) => {
       if(err) throw err;
       console.log('file saved');
-      res.end('saved');
+      res.end('POst Saved saved');
     });
   }
 
@@ -149,6 +150,42 @@ const server = http.createServer((req, res)  => {
         }
       }
     });
+  }
+
+  function putData(body){
+    console.log(body);
+    let element = body.split('=')[1].split('&')[0];
+    let weight = body.split('=')[2].split(',')[0].split('&')[0];
+    let description = body.split('&')[2].split('=')[1];
+    console.log('DESCRIPTION: ' + description);
+    console.log('WEIGHT: ' +weight);
+    console.log('ELMENT: '+element);
+    fs.readFile(`./public/${element}.html`, (err, data) =>{
+      let dataArray = (data.toString().split('\n'));
+      console.log(dataArray);
+     // dataArray.splice(10,1, `${element} is ${description} `);
+      dataArray.splice(11,1, `${element} is a chemcical element with a weight of ${weight}`);
+      console.log(dataArray);
+      deleteElementHtml(dataArray, element);
+
+
+    });
+
+    function deleteElementHtml(dataArray, element){fs.unlink(`./public/${element}.html`, (err) =>{
+      if (err) throw err;
+      recreateElement(dataArray, element);
+    });
+
+    function recreateElement(dataArray, element){
+    //console.log('createIndex: ' + element);
+    fs.writeFile(`./public/${element}.html`, dataArray.join('\n'), (err) => {
+      if(err) throw err;
+      console.log('file saved');
+      res.end('saved');
+    });
+  }
+
+    }
   }
 
 
