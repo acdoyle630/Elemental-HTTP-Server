@@ -1,8 +1,8 @@
 /*jshint esversion: 6*/
+let numberOfElements = ['helium', 'hydrogen'];
 
 const http = require('http');
 const fs = require('fs');
-let numberOfElements = ['helium', 'hydrogen'];
 
 // Create Server with 2 starting elements and identify req
 const server = http.createServer((req, res)  => {
@@ -13,6 +13,7 @@ const server = http.createServer((req, res)  => {
     url = 'index.html';
   }
   if(method === 'GET'){
+    console.log(numberOfElements.length);
   var fileName = fs.readFile(`./public/${url}`,(err, data) => {
     res.writeHead(200);
     res.end(data);
@@ -39,7 +40,7 @@ const server = http.createServer((req, res)  => {
     let description = bodyArray[2].split('=')[1];
     numberOfElements.push(element);
     if (fs.existsSync(`./public/${element}.html`) === false){
-      numberOfElements++;
+      //numberOfElements++;
       writeFile(element,weight,description);
     } else {
       putData(body);
@@ -49,7 +50,7 @@ const server = http.createServer((req, res)  => {
   function writeFile(element, weight, description){
     fs.writeFile(`./public/${element}.html`, fileContent(element,weight,description), (err) => {
       if(err) throw err;
-      console.log('NUMBER OF ELEMENTS: ' +numberOfElements.length);
+      console.log(numberOfElements.length);
       appendFile(element);
     });
   }
@@ -82,7 +83,7 @@ const server = http.createServer((req, res)  => {
   function appendIndex(element){
     fs.readFile('./public/index.html', (err, data) =>{
       let dataArray = data.toString().split('\n');
-      dataArray.splice(10,1, `These are fuck ${numberOfElements.length} fuck`);
+      dataArray.splice(10,1, `These are ${numberOfElements.length}`);
       dataArray.splice(18,0,`   <li>
       <a href = /${element}.html>${element}</a>
     </li>`);
@@ -110,6 +111,7 @@ const server = http.createServer((req, res)  => {
   function deleteElement(data){
     let elementToBeDeleted = data.toString().split('=')[1];
     elementToBeDeleted = elementToBeDeleted.split('&')[0];
+    numberOfElements.splice(numberOfElements.indexOf(elementToBeDeleted), 1);
     fs.unlink(`./public/${elementToBeDeleted}.html`, (err) =>{
       if (err) throw err;
     });
