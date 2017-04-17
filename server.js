@@ -6,6 +6,7 @@ const fs = require('fs');
 
 // Create Server with 2 starting elements and identify req
 const server = http.createServer((req, res)  => {
+  console.log(numberOfElements);
   let method = req.method;
   let url = req.url;
   let host = req.host;
