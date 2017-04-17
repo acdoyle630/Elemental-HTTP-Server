@@ -2,7 +2,7 @@
 
 const http = require('http');
 const fs = require('fs');
-let numberOfElements = 2;
+let numberOfElements = ['helium', 'hydrogen'];
 
 // Create Server with 2 starting elements and identify req
 const server = http.createServer((req, res)  => {
@@ -14,7 +14,6 @@ const server = http.createServer((req, res)  => {
   }
   if(method === 'GET'){
   var fileName = fs.readFile(`./public/${url}`,(err, data) => {
-    //if (err) throw err;
     res.writeHead(200);
     res.end(data);
     });
@@ -28,28 +27,21 @@ const server = http.createServer((req, res)  => {
   }
   if(method === 'DELETE'){
     req.on('data', (data) =>{
-      console.log(data.toString());
       deleteElement(data);
     });
 
   }
 // check to see if posted file exists
   function checkFile(body){
-    console.log("BODY: " + body);
     let bodyArray = body.split('&');
     let element = bodyArray[0].split('=')[1];
     let weight = bodyArray[1].split('=')[1];
     let description = bodyArray[2].split('=')[1];
-    console.log("BODY ARRAY: " +  bodyArray);
-    console.log("WEIGHT: " + weight);
-    console.log("DESCRIPTION: " + description);
-    console.log("ELEMENT: " +element);
+    numberOfElements.push(element);
     if (fs.existsSync(`./public/${element}.html`) === false){
-      console.log('no file');
       numberOfElements++;
       writeFile(element,weight,description);
     } else {
-      console.log('already exists');
       putData(body);
     }
   }
@@ -57,8 +49,7 @@ const server = http.createServer((req, res)  => {
   function writeFile(element, weight, description){
     fs.writeFile(`./public/${element}.html`, fileContent(element,weight,description), (err) => {
       if(err) throw err;
-      console.log('file saved');
-      console.log('NUMBER OF ELEMENTS: ' +numberOfElements);
+      console.log('NUMBER OF ELEMENTS: ' +numberOfElements.length);
       appendFile(element);
     });
   }
@@ -83,7 +74,6 @@ const server = http.createServer((req, res)  => {
 //POST
   function appendFile(element){
     var elementFileName = fs.readFile(`./public/${element}.html`,(err, data) => {
-    console.log('append' + element);
     res.writeHead(200);
     appendIndex(element);
     });
@@ -91,17 +81,11 @@ const server = http.createServer((req, res)  => {
 //POST
   function appendIndex(element){
     fs.readFile('./public/index.html', (err, data) =>{
-      console.log('index: ' + data);
       let dataArray = data.toString().split('\n');
-      console.log(dataArray);
-      console.log(dataArray.length);
-      dataArray.splice(10,1, `These are ${numberOfElements}`);
+      dataArray.splice(10,1, `These are fuck ${numberOfElements.length} fuck`);
       dataArray.splice(18,0,`   <li>
       <a href = /${element}.html>${element}</a>
     </li>`);
-      console.log(dataArray);
-      //appenddddIndex(dataArray);
-
       deleteIndex(dataArray);
     });
   }
@@ -115,10 +99,8 @@ const server = http.createServer((req, res)  => {
   }
 //POST
   function createIndex(dataArray){
-    //console.log('createIndex: ' + element);
     fs.writeFile(`./public/index.html`, dataArray.join('\n'), (err) => {
       if(err) throw err;
-      console.log('file saved');
       res.end('POst Saved saved');
     });
   }
@@ -126,9 +108,7 @@ const server = http.createServer((req, res)  => {
 
 //DELETE
   function deleteElement(data){
-    console.log(data);
     let elementToBeDeleted = data.toString().split('=')[1];
-    console.log(elementToBeDeleted);
     elementToBeDeleted = elementToBeDeleted.split('&')[0];
     fs.unlink(`./public/${elementToBeDeleted}.html`, (err) =>{
       if (err) throw err;
@@ -139,13 +119,10 @@ const server = http.createServer((req, res)  => {
   function deleteElementIndex(element){
     fs.readFile('./public/index.html', (err, data) => {
       let deleteElement = data.toString().split('\n');
-      console.log(deleteElement);
       for(var i = 0; i<deleteElement.length; i++){
         if(deleteElement[i].indexOf(element) >=0 ){
-          console.log('found');
-          numberOfElements --;
           deleteElement.splice(i-1, 3);
-          deleteElement.splice(10,1, `These are ${numberOfElements}`);
+          deleteElement.splice(10,1, `These are ${numberOfElements.length}`);
           deleteIndex(deleteElement);
         }
       }
@@ -153,19 +130,12 @@ const server = http.createServer((req, res)  => {
   }
 
   function putData(body){
-    console.log(body);
     let element = body.split('=')[1].split('&')[0];
     let weight = body.split('=')[2].split(',')[0].split('&')[0];
     let description = body.split('&')[2].split('=')[1];
-    console.log('DESCRIPTION: ' + description);
-    console.log('WEIGHT: ' +weight);
-    console.log('ELMENT: '+element);
     fs.readFile(`./public/${element}.html`, (err, data) =>{
       let dataArray = (data.toString().split('\n'));
-      console.log(dataArray);
-     // dataArray.splice(10,1, `${element} is ${description} `);
       dataArray.splice(11,1, `${element} is a chemcical element with a weight of ${weight}`);
-      console.log(dataArray);
       deleteElementHtml(dataArray, element);
 
 
@@ -177,24 +147,15 @@ const server = http.createServer((req, res)  => {
     });
 
     function recreateElement(dataArray, element){
-    //console.log('createIndex: ' + element);
     fs.writeFile(`./public/${element}.html`, dataArray.join('\n'), (err) => {
       if(err) throw err;
-      console.log('file saved');
       res.end('saved');
-    });
-  }
-
+        });
+      }
     }
   }
-
-
-
 });
 
-      // fs.readFile('./public/index.html', (err, data) =>{
-      //   let data
-      // });
 
 server.listen(6969, () => {
 
