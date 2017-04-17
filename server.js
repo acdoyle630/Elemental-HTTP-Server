@@ -73,7 +73,7 @@ const server = http.createServer((req, res)  => {
 </head>
 <body>
   <h1>${element}</h1>
-  <h2>H</h2>
+  <h2>${element.split('')[0].toUpperCase()}</h2>
   <h3>Atomic number is ${weight}</h3>
   <p>${element} is a chemical element with symbol He and atomic number ${weight}. It is ${description}.</p>
   <p><a href="/">back</a></p>
