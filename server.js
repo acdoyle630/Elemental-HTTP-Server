@@ -37,20 +37,20 @@ const server = http.createServer((req, res)  => {
     let bodyArray = body.split('&');
     let element = bodyArray[0].split('=')[1];
     let weight = bodyArray[1].split('=')[1];
-    let description = bodyArray[2].split('=')[1];
+    let description = bodyArray[2].split('=')[1].split('+').join(' ');
     numberOfElements.push(element);
+    console.log(description);
     if (fs.existsSync(`./public/${element}.html`) === false){
-      //numberOfElements++;
       writeFile(element,weight,description);
     } else {
       putData(body);
+      console.log('nevermind');
     }
   }
 // POST save new file with name posted
   function writeFile(element, weight, description){
     fs.writeFile(`./public/${element}.html`, fileContent(element,weight,description), (err) => {
       if(err) throw err;
-      console.log(numberOfElements.length);
       appendFile(element);
     });
   }
@@ -83,7 +83,7 @@ const server = http.createServer((req, res)  => {
   function appendIndex(element){
     fs.readFile('./public/index.html', (err, data) =>{
       let dataArray = data.toString().split('\n');
-      dataArray.splice(10,1, `These are ${numberOfElements.length}`);
+      dataArray.splice(10,1, `<h3>These are ${numberOfElements.length}</h3>`);
       dataArray.splice(18,0,`   <li>
       <a href = /${element}.html>${element}</a>
     </li>`);
@@ -126,7 +126,7 @@ const server = http.createServer((req, res)  => {
       for(var i = 0; i<deleteElement.length; i++){
         if(deleteElement[i].indexOf(element) >=0 ){
           deleteElement.splice(i-1, 3);
-          deleteElement.splice(10,1, `These are ${numberOfElements.length}`);
+          deleteElement.splice(10,1, `<h3>These are ${numberOfElements.length}</h3>`);
           deleteIndex(deleteElement);
         }
       }
@@ -136,10 +136,13 @@ const server = http.createServer((req, res)  => {
   function putData(body){
     let element = body.split('=')[1].split('&')[0];
     let weight = body.split('=')[2].split(',')[0].split('&')[0];
-    let description = body.split('&')[2].split('=')[1];
+    let description = body.split('&')[2].split('=')[1].split('+').join(' ');
     fs.readFile(`./public/${element}.html`, (err, data) =>{
       let dataArray = (data.toString().split('\n'));
-      dataArray.splice(11,1, `${element} is a chemcical element with a weight of ${weight}`);
+      dataArray.splice(10,1, `<h3>Atmomic number is ${weight}</h3>`);
+      console.log('Weight: ' +dataArray);
+      dataArray.splice(11,1, `<p>${element} is a chemcical element with a weight of ${weight}. It is ${description}</p>`);
+      console.log('Description: ' +dataArray);
       deleteElementHtml(dataArray, element);
 
 
@@ -151,6 +154,7 @@ const server = http.createServer((req, res)  => {
     });
 
     function recreateElement(dataArray, element){
+      console.log(dataArray.join('\n'));
     fs.writeFile(`./public/${element}.html`, dataArray.join('\n'), (err) => {
       if(err) throw err;
       res.end('saved');
