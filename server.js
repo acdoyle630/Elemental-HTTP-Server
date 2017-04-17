@@ -111,12 +111,14 @@ const server = http.createServer((req, res)  => {
   function deleteElement(data){
     let elementToBeDeleted = data.toString().split('=')[1];
     elementToBeDeleted = elementToBeDeleted.split('&')[0];
+    if(numberOfElements.indexOf(elementToBeDeleted) >= 0){
     numberOfElements.splice(numberOfElements.indexOf(elementToBeDeleted), 1);
     fs.unlink(`./public/${elementToBeDeleted}.html`, (err) =>{
       if (err) throw err;
     });
     deleteElementIndex(elementToBeDeleted);
-  }
+  } else (res.end('element does not exist...yet'));
+}
 
   function deleteElementIndex(element){
     fs.readFile('./public/index.html', (err, data) => {
