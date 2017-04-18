@@ -6,7 +6,7 @@ const fs = require('fs');
 
 // Create Server with 2 starting elements and identify req
 const server = http.createServer((req, res)  => {
-  //console.log(numberOfElements);
+  console.log(numberOfElements);
   let method = req.method;
   let url = req.url;
   let host = req.host;
@@ -35,41 +35,17 @@ const server = http.createServer((req, res)  => {
   }
 // check to see if posted file exists
   function checkFile(body){
-    let element;
-    let weight;
-    let description;
     let bodyArray = body.split('&');
-    for(var i = 0; i < bodyArray.length; i++){
-      //console.log('BODY ARRAY : ' +bodyArray[i]);
-      let elemList = bodyArray[i].split('=');
-      //console.log(elemList);
-      for(var j = 0; j < elemList.length; j++){
-        console.log(elemList[j]);
-        if(elemList[j] === 'element'){
-          element = elemList[j + 1];
-        }
-        if(elemList[j] === 'weight'){
-          weight = elemList[j + 1];
-        }
-        if(elemList[j] === 'description'){
-          description = elemList[j + 1];
-        }
-      }
-    }
-    console.log("ELEM: " + element);
-    console.log("WEIGHT: "+weight);
-    console.log('DESCRIP: ' + description);
-    //let element = bodyArray[0].split('=')[1];
-    //let weight = bodyArray[1].split('=')[1];
-    //let description = bodyArray[2].split('=')[1].split('+').join(' ');
-   numberOfElements.push(element);
-    //console.log(description);
+    let element = bodyArray[0].split('=')[1];
+    let weight = bodyArray[1].split('=')[1];
+    let description = bodyArray[2].split('=')[1].split('+').join(' ');
+    numberOfElements.push(element);
+    console.log(description);
     if (fs.existsSync(`./public/${element}.html`) === false){
-    //  console.log('g');
       writeFile(element,weight,description);
-   } else {
+    } else {
       putData(body);
-     // console.log('nah');
+      console.log('nevermind');
     }
   }
 // POST save new file with name posted
