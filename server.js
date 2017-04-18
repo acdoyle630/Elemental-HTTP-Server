@@ -3,6 +3,7 @@ let numberOfElements = ['helium', 'hydrogen'];
 
 const http = require('http');
 const fs = require('fs');
+const key = 'guest';
 
 // Create Server with 2 starting elements and identify req
 const server = http.createServer((req, res)  => {
@@ -14,13 +15,15 @@ const server = http.createServer((req, res)  => {
     url = 'index.html';
   }
   if(method === 'GET'){
-    console.log(numberOfElements.length);
   var fileName = fs.readFile(`./public/${url}`,(err, data) => {
-    res.writeHead(200);
+    res.writeHead(200, {
+      'Content-Type': 'text/html',
+    });
     res.end(data);
     });
   }
   if(method === 'POST' || method === 'PUT'){
+
     let body ='';
     req.on('data', ( data ) =>{
       body += data;
@@ -39,13 +42,17 @@ const server = http.createServer((req, res)  => {
     let element = bodyArray[0].split('=')[1];
     let weight = bodyArray[1].split('=')[1];
     let description = bodyArray[2].split('=')[1].split('+').join(' ');
-    numberOfElements.push(element);
-    console.log(description);
-    if (fs.existsSync(`./public/${element}.html`) === false){
-      writeFile(element,weight,description);
+    let password = bodyArray[3].split('=')[1];
+    if (password === key){
+      if (fs.existsSync(`./public/${element}.html`) === false){
+        numberOfElements.push(element);
+        writeFile(element,weight,description);
+      } else {
+        putData(body);
+        console.log('nevermind');
+      }
     } else {
-      putData(body);
-      console.log('nevermind');
+      res.end('not today');
     }
   }
 // POST save new file with name posted
